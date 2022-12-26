@@ -1,0 +1,782 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-upds-jjcj-dev-5ia"
+		},
+		"ADLS_LinkedService_Grupo1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADLS_LinkedService_Grupo1'"
+		},
+		"Synapse_LinkedServiceAnalytics1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Synapse_LinkedServiceAnalytics1'"
+		},
+		"FileServer_LinkedService_Grupo1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'FileServer_LinkedService_Grupo1'"
+		},
+		"ADLS_LinkedService_Grupo1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dlsupdsjjcjdev51p.dfs.core.windows.net/"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-upds-jjcj-dev-i1o.vault.azure.net/"
+		},
+		"integrationRuntimeGrupo1_properties_typeProperties_linkedInfo_resourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/fba00fc5-2f97-4f09-bed8-83dfbc34ecc7/resourcegroups/rg-updatascience-jjcj-eastus2-001/providers/Microsoft.DataFactory/factories/adf-upds-jjcj-dev-s8w/integrationruntimes/IRLocalJJCJ002"
+		},
+		"FileServer_LinkedService_Grupo1_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\LAPTOP-6KUSVJ1U\\C$\\"
+		},
+		"FileServer_LinkedService_Grupo1_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "updatascience"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_LinkedService_Grupo1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ADLS_LinkedService_Grupo1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ADLS_LinkedService_Grupo1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Synapse_LinkedServiceAnalytics1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('Synapse_LinkedServiceAnalytics1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntimeGrupo1')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {
+					"linkedInfo": {
+						"resourceId": "[parameters('integrationRuntimeGrupo1_properties_typeProperties_linkedInfo_resourceId')]",
+						"authorizationType": "Rbac"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_master_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_LinkedService_Grupo1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "master"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS_LinkedService_Grupo1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_raw_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_LinkedService_Grupo1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"application": {
+						"type": "string",
+						"defaultValue": "informes/"
+					},
+					"filename": {
+						"type": "string",
+						"defaultValue": "2015_2020"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat(dataset().filename,'.parquet')",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().application",
+							"type": "Expression"
+						},
+						"fileSystem": "raw"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "RPJ",
+						"type": "UTF8"
+					},
+					{
+						"name": "TipoEmpresa",
+						"type": "UTF8"
+					},
+					{
+						"name": "TipoSector",
+						"type": "UTF8"
+					},
+					{
+						"name": "NombreEmpresa",
+						"type": "UTF8"
+					},
+					{
+						"name": "RUC",
+						"type": "UTF8"
+					},
+					{
+						"name": "CIIU",
+						"type": "UTF8"
+					},
+					{
+						"name": "Ejercicio",
+						"type": "UTF8"
+					},
+					{
+						"name": "TipoInformacion",
+						"type": "UTF8"
+					},
+					{
+						"name": "Trimestre",
+						"type": "UTF8"
+					},
+					{
+						"name": "Moneda",
+						"type": "UTF8"
+					},
+					{
+						"name": "MetodoFlujoEfectivo",
+						"type": "UTF8"
+					},
+					{
+						"name": "ActivoTotal",
+						"type": "UTF8"
+					},
+					{
+						"name": "PatrimonioTotal",
+						"type": "UTF8"
+					},
+					{
+						"name": "TotalIngreso",
+						"type": "UTF8"
+					},
+					{
+						"name": "UtilidadNeta",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS_LinkedService_Grupo1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FileServer_LinkedService_Grupo1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "GRUPO1",
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('FileServer_LinkedService_Grupo1_properties_typeProperties_host')]",
+					"userId": "[parameters('FileServer_LinkedService_Grupo1_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('FileServer_LinkedService_Grupo1_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntimeGrupo1",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeGrupo1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_raw_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "FileServer_LinkedService_Grupo1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"application": {
+						"type": "string"
+					},
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": {
+							"value": "@concat(dataset().filename,'.csv') ",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().application",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "RPJ",
+						"type": "String"
+					},
+					{
+						"name": "TipoEmpresa",
+						"type": "String"
+					},
+					{
+						"name": "TipoSector",
+						"type": "String"
+					},
+					{
+						"name": "NombreEmpresa",
+						"type": "String"
+					},
+					{
+						"name": "RUC",
+						"type": "String"
+					},
+					{
+						"name": "CIIU",
+						"type": "String"
+					},
+					{
+						"name": "Ejercicio",
+						"type": "String"
+					},
+					{
+						"name": "TipoInformacion",
+						"type": "String"
+					},
+					{
+						"name": "Trimestre",
+						"type": "String"
+					},
+					{
+						"name": "Moneda",
+						"type": "String"
+					},
+					{
+						"name": "MetodoFlujoEfectivo",
+						"type": "String"
+					},
+					{
+						"name": "ActivoTotal",
+						"type": "String"
+					},
+					{
+						"name": "PatrimonioTotal",
+						"type": "String"
+					},
+					{
+						"name": "TotalIngreso",
+						"type": "String"
+					},
+					{
+						"name": "UtilidadNeta",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/FileServer_LinkedService_Grupo1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Raw_to_Master')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_raw_parquet",
+								"type": "DatasetReference"
+							},
+							"name": "RAW"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_master_parquet",
+								"type": "DatasetReference"
+							},
+							"name": "LoadMaster",
+							"rejectedDataLinkedService": {
+								"referenceName": "ADLS_LinkedService_Grupo1",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "cast1"
+						},
+						{
+							"name": "ModifyColumns1",
+							"description": "Autogenerated by data preview actions"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          RPJ as string,",
+						"          TipoEmpresa as string,",
+						"          TipoSector as string,",
+						"          NombreEmpresa as string,",
+						"          RUC as string,",
+						"          CIIU as string,",
+						"          Ejercicio as string,",
+						"          TipoInformacion as string,",
+						"          Trimestre as string,",
+						"          Moneda as string,",
+						"          MetodoFlujoEfectivo as string,",
+						"          ActivoTotal as string,",
+						"          PatrimonioTotal as string,",
+						"          TotalIngreso as string,",
+						"          UtilidadNeta as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> RAW",
+						"RAW cast(output(",
+						"          RPJ as string,",
+						"          TipoEmpresa as string,",
+						"          TipoSector as string,",
+						"          NombreEmpresa as string,",
+						"          RUC as string,",
+						"          CIIU as string,",
+						"          Ejercicio as string,",
+						"          TipoInformacion as string,",
+						"          Trimestre as string,",
+						"          Moneda as string,",
+						"          MetodoFlujoEfectivo as string,",
+						"          ActivoTotal as double '000,000,000.00',",
+						"          PatrimonioTotal as double '000,000,000.00',",
+						"          TotalIngreso as double '000,000,000.00',",
+						"          UtilidadNeta as double '000,000,000.00'",
+						"     ),",
+						"     errors: false) ~> cast1",
+						"cast1 derive(UtilidadNeta = toDouble(toString(UtilidadNeta)),",
+						"          TotalIngreso = toDouble(toString(TotalIngreso)),",
+						"          PatrimonioTotal = toDouble(toString(PatrimonioTotal)),",
+						"          ActivoTotal = toDouble(toString(ActivoTotal))) ~> ModifyColumns1",
+						"ModifyColumns1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> LoadMaster"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_raw_parquet')]",
+				"[concat(variables('factoryId'), '/datasets/ds_master_parquet')]",
+				"[concat(variables('factoryId'), '/linkedServices/ADLS_LinkedService_Grupo1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadMaster')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Raw_to_Master",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Raw_to_Master",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"RAW": {
+										"application": "/informes/",
+										"filename": "2015_2020"
+									},
+									"LoadMaster": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "SMV/Raw_To_Master"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-12-26T17:24:57Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Raw_to_Master')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SOURCE_TO_RAW')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Source_To_Raw",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "FileServerReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "RPJ",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "RPJ",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "TipoEmpresa",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TipoEmpresa",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "TipoSector",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TipoSector",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "NombreEmpresa",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "NombreEmpresa",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "RUC",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "RUC",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "CIIU",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "CIIU",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Ejercicio",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Ejercicio",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "TipoInformacion",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TipoInformacion",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Trimestre",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Trimestre",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Moneda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Moneda",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "MetodoFlujoEfectivo",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "MetodoFlujoEfectivo",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "ActivoTotal",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ActivoTotal",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "PatrimonioTotal",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "PatrimonioTotal",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "TotalIngreso",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TotalIngreso",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "UtilidadNeta",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "UtilidadNeta",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_raw_csv",
+								"type": "DatasetReference",
+								"parameters": {
+									"application": "\\data\\smv\\",
+									"filename": "InfFin_2015_2020_A_I"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_raw_parquet",
+								"type": "DatasetReference",
+								"parameters": {
+									"application": "informes/",
+									"filename": "2015_2020"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "SMV/01 RAW"
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-12-26T17:24:58Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_raw_csv')]",
+				"[concat(variables('factoryId'), '/datasets/ds_raw_parquet')]"
+			]
+		}
+	]
+}

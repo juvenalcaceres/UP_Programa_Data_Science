@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-upds-jjcj-dev-5ia"
+		},
+		"ADLS_LinkedService_Grupo1_accountKey": {
+			"value": ""
+		},
+		"FileServer_LinkedService_Grupo1_password": {
+			"value": ""
+		},
+		"Synapse_LinkedServiceAnalytics1_connectionString": {
+			"value": ""
+		},
+		"ADLS_LinkedService_Grupo1_properties_typeProperties_url": {
+			"value": "https://dlsupdsjjcjdev51p.dfs.core.windows.net/"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://kv-upds-jjcj-dev-i1o.vault.azure.net/"
+		},
+		"FileServer_LinkedService_Grupo1_properties_typeProperties_host": {
+			"value": "\\\\LAPTOP-6KUSVJ1U\\C$\\"
+		},
+		"FileServer_LinkedService_Grupo1_properties_typeProperties_userId": {
+			"value": "updatascience"
+		},
+		"integrationRuntimeGrupo1_properties_typeProperties_linkedInfo_resourceId": {
+			"value": "/subscriptions/fba00fc5-2f97-4f09-bed8-83dfbc34ecc7/resourcegroups/rg-updatascience-jjcj-eastus2-001/providers/Microsoft.DataFactory/factories/adf-upds-jjcj-dev-s8w/integrationruntimes/IRLocalJJCJ002"
+		}
+	}
+}

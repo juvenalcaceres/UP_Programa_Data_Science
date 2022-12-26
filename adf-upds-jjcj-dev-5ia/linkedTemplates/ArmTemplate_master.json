@@ -1,0 +1,98 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-upds-jjcj-dev-5ia"
+		},
+		"ADLS_LinkedService_Grupo1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADLS_LinkedService_Grupo1'"
+		},
+		"FileServer_LinkedService_Grupo1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'FileServer_LinkedService_Grupo1'"
+		},
+		"Synapse_LinkedServiceAnalytics1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Synapse_LinkedServiceAnalytics1'"
+		},
+		"ADLS_LinkedService_Grupo1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dlsupdsjjcjdev51p.dfs.core.windows.net/"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-upds-jjcj-dev-i1o.vault.azure.net/"
+		},
+		"FileServer_LinkedService_Grupo1_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\LAPTOP-6KUSVJ1U\\C$\\"
+		},
+		"FileServer_LinkedService_Grupo1_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "updatascience"
+		},
+		"integrationRuntimeGrupo1_properties_typeProperties_linkedInfo_resourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/fba00fc5-2f97-4f09-bed8-83dfbc34ecc7/resourcegroups/rg-updatascience-jjcj-eastus2-001/providers/Microsoft.DataFactory/factories/adf-upds-jjcj-dev-s8w/integrationruntimes/IRLocalJJCJ002"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adf-upds-jjcj-dev-5ia_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"ADLS_LinkedService_Grupo1_accountKey": {
+						"value": "[parameters('ADLS_LinkedService_Grupo1_accountKey')]"
+					},
+					"Synapse_LinkedServiceAnalytics1_connectionString": {
+						"value": "[parameters('Synapse_LinkedServiceAnalytics1_connectionString')]"
+					},
+					"FileServer_LinkedService_Grupo1_password": {
+						"value": "[parameters('FileServer_LinkedService_Grupo1_password')]"
+					},
+					"ADLS_LinkedService_Grupo1_properties_typeProperties_url": {
+						"value": "[parameters('ADLS_LinkedService_Grupo1_properties_typeProperties_url')]"
+					},
+					"AzureKeyVault1_properties_typeProperties_baseUrl": {
+						"value": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+					},
+					"integrationRuntimeGrupo1_properties_typeProperties_linkedInfo_resourceId": {
+						"value": "[parameters('integrationRuntimeGrupo1_properties_typeProperties_linkedInfo_resourceId')]"
+					},
+					"FileServer_LinkedService_Grupo1_properties_typeProperties_host": {
+						"value": "[parameters('FileServer_LinkedService_Grupo1_properties_typeProperties_host')]"
+					},
+					"FileServer_LinkedService_Grupo1_properties_typeProperties_userId": {
+						"value": "[parameters('FileServer_LinkedService_Grupo1_properties_typeProperties_userId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
