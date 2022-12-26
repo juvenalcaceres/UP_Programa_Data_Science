@@ -1,0 +1,259 @@
+{
+	"name": "SOURCE_TO_RAW",
+	"properties": {
+		"activities": [
+			{
+				"name": "Source_To_Raw",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "FileServerReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "RPJ",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "RPJ",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "TipoEmpresa",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TipoEmpresa",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "TipoSector",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TipoSector",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "NombreEmpresa",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "NombreEmpresa",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "RUC",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "RUC",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "CIIU",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CIIU",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Ejercicio",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Ejercicio",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "TipoInformacion",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TipoInformacion",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Trimestre",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Trimestre",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "Moneda",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Moneda",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "MetodoFlujoEfectivo",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "MetodoFlujoEfectivo",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "ActivoTotal",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ActivoTotal",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "PatrimonioTotal",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "PatrimonioTotal",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "TotalIngreso",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TotalIngreso",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "UtilidadNeta",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "UtilidadNeta",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_raw_csv",
+						"type": "DatasetReference",
+						"parameters": {
+							"application": "\\data\\smv\\",
+							"filename": "InfFin_2015_2020_A_I"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_raw_parquet",
+						"type": "DatasetReference",
+						"parameters": {
+							"application": "informes/",
+							"filename": "2015_2020"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "SMV/01 RAW"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-12-26T17:24:58Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

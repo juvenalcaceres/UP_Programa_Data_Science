@@ -1,0 +1,99 @@
+{
+	"name": "ds_raw_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_LinkedService_Grupo1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"application": {
+				"type": "string",
+				"defaultValue": "informes/"
+			},
+			"filename": {
+				"type": "string",
+				"defaultValue": "2015_2020"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().filename,'.parquet')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().application",
+					"type": "Expression"
+				},
+				"fileSystem": "raw"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "RPJ",
+				"type": "UTF8"
+			},
+			{
+				"name": "TipoEmpresa",
+				"type": "UTF8"
+			},
+			{
+				"name": "TipoSector",
+				"type": "UTF8"
+			},
+			{
+				"name": "NombreEmpresa",
+				"type": "UTF8"
+			},
+			{
+				"name": "RUC",
+				"type": "UTF8"
+			},
+			{
+				"name": "CIIU",
+				"type": "UTF8"
+			},
+			{
+				"name": "Ejercicio",
+				"type": "UTF8"
+			},
+			{
+				"name": "TipoInformacion",
+				"type": "UTF8"
+			},
+			{
+				"name": "Trimestre",
+				"type": "UTF8"
+			},
+			{
+				"name": "Moneda",
+				"type": "UTF8"
+			},
+			{
+				"name": "MetodoFlujoEfectivo",
+				"type": "UTF8"
+			},
+			{
+				"name": "ActivoTotal",
+				"type": "UTF8"
+			},
+			{
+				"name": "PatrimonioTotal",
+				"type": "UTF8"
+			},
+			{
+				"name": "TotalIngreso",
+				"type": "UTF8"
+			},
+			{
+				"name": "UtilidadNeta",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

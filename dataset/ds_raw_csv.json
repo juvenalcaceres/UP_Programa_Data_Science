@@ -1,0 +1,99 @@
+{
+	"name": "ds_raw_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "FileServer_LinkedService_Grupo1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"application": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": {
+					"value": "@concat(dataset().filename,'.csv') ",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().application",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ";",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "RPJ",
+				"type": "String"
+			},
+			{
+				"name": "TipoEmpresa",
+				"type": "String"
+			},
+			{
+				"name": "TipoSector",
+				"type": "String"
+			},
+			{
+				"name": "NombreEmpresa",
+				"type": "String"
+			},
+			{
+				"name": "RUC",
+				"type": "String"
+			},
+			{
+				"name": "CIIU",
+				"type": "String"
+			},
+			{
+				"name": "Ejercicio",
+				"type": "String"
+			},
+			{
+				"name": "TipoInformacion",
+				"type": "String"
+			},
+			{
+				"name": "Trimestre",
+				"type": "String"
+			},
+			{
+				"name": "Moneda",
+				"type": "String"
+			},
+			{
+				"name": "MetodoFlujoEfectivo",
+				"type": "String"
+			},
+			{
+				"name": "ActivoTotal",
+				"type": "String"
+			},
+			{
+				"name": "PatrimonioTotal",
+				"type": "String"
+			},
+			{
+				"name": "TotalIngreso",
+				"type": "String"
+			},
+			{
+				"name": "UtilidadNeta",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

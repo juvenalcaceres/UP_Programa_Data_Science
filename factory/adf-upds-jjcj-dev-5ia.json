@@ -1,0 +1,9 @@
+{
+	"name": "adf-upds-jjcj-dev-5ia",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "94115a81-c058-4d51-b6cc-7f17f15e0170",
+		"tenantId": "3705cdfe-1991-48fc-9579-b0da85eec9ee"
+	}
+}

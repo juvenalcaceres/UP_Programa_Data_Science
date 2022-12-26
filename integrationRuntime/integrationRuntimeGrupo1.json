@@ -1,0 +1,12 @@
+{
+	"name": "integrationRuntimeGrupo1",
+	"properties": {
+		"type": "SelfHosted",
+		"typeProperties": {
+			"linkedInfo": {
+				"resourceId": "/subscriptions/fba00fc5-2f97-4f09-bed8-83dfbc34ecc7/resourcegroups/rg-updatascience-jjcj-eastus2-001/providers/Microsoft.DataFactory/factories/adf-upds-jjcj-dev-s8w/integrationruntimes/IRLocalJJCJ002",
+				"authorizationType": "Rbac"
+			}
+		}
+	}
+}

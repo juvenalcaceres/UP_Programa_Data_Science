@@ -1,0 +1,43 @@
+{
+	"name": "LoadMaster",
+	"properties": {
+		"activities": [
+			{
+				"name": "Raw_to_Master",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Raw_to_Master",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"RAW": {
+								"application": "/informes/",
+								"filename": "2015_2020"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "SMV/Raw_To_Master"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-12-26T17:24:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
