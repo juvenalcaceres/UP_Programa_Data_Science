@@ -1,0 +1,20 @@
+{
+	"name": "ddl_lake_create_external",
+	"properties": {
+		"folder": {
+			"name": "master_main"
+		},
+		"content": {
+			"query": "\n-----------------------------------------------\n--Paso 01: Creacion table\n-----------------------------------------------\nSELECT *\nFrom OPENROWSET (BULK '/master/*.parquet',\nDATA_SOURCE= 'ExternalUPDataSource',\nFORMAT ='PARQUET')  AS [file]\nGO;\n\n\n-----------------------------------------------\n--Paso 02: Creacion table\n-----------------------------------------------\nUSE updatalakehouse;\nGO\n\nCREATE EXTERNAL TABLE master_party.m_party(\n    RPJ NVARCHAR(50),\n    TipoEmpresa NVARCHAR(80),\n    TipoSector NVARCHAR(25),\n    NombreEmpresa NVARCHAR(180),\n    RUC NVARCHAR(11),\n    CIIU NVARCHAR(4),\n    Ejercicio NVARCHAR(4),\n    TipoInformacion NVARCHAR(16),\n    Trimestre NVARCHAR(5),\n    Moneda NVARCHAR(7),\n    MetodoFlujoEfectivo NVARCHAR (16),\n    ActivoTotal FLOAT,\n    PatrimonioTotal FLOAT,\n    TotalIngreso FLOAT,\n    UtilidadNeta FLOAT\n)\n WITH (\n     LOCATION = '/master/*.parquet',\n     DATA_SOURCE = ExternalUPDataSource,  \n     FILE_FORMAT = UPParquetFileFormat\n )\nGO\n\n---------------------------------------------------------\n--Paso 03: Validación de tipo de dato y tamaño de string\n---------------------------------------------------------\nSELECT TOP(10) RPJ, TipoEmpresa, TipoSector, NombreEmpresa, RUC, CIIU, Ejercicio, TipoInformacion, Trimestre, Moneda, MetodoFlujoEfectivo, ActivoTotal, PatrimonioTotal, TotalIngreso, UtilidadNeta\nFROM master_party.m_party\n\nSELECT RPJ, TipoEmpresa, TipoSector, NombreEmpresa, RUC, CIIU, Ejercicio, TipoInformacion, Trimestre, Moneda, MetodoFlujoEfectivo, ActivoTotal, PatrimonioTotal, TotalIngreso, UtilidadNeta\nFROM master_party.m_party\n\n\nSELECT RPJ, TipoEmpresa, TipoSector, NombreEmpresa, RUC, CIIU, Ejercicio, TipoInformacion, Trimestre, Moneda, MetodoFlujoEfectivo, ActivoTotal, PatrimonioTotal, TotalIngreso, UtilidadNeta\nFrom OPENROWSET (BULK '/master/*.parquet',\nDATA_SOURCE= 'ExternalUPDataSource',\nFORMAT ='PARQUET')  AS [file]\nGO;\n\n-----------------------------------------------\n--Paso 04: Consulta de archivos\n-----------------------------------------------\nSELECT TOP(100) * \nFrom OPENROWSET (BULK '/master/ReportesMaster/*.parquet',\nDATA_SOURCE= 'ExternalUPDataSource',\nFORMAT ='PARQUET')  AS [file]\n--WHERE request_type = 'vote'\nGO;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "updatalakehouse",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

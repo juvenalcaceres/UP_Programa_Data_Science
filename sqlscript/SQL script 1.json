@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [RPJ]\n,[TipoEmpresa]\n,[TipoSector]\n,[NombreEmpresa]\n,[RUC]\n,[CIIU]\n,[Ejercicio]\n,[TipoInformacion]\n,[Trimestre]\n,[Moneda]\n,[MetodoFlujoEfectivo]\n,[ActivoTotal]\n,[PatrimonioTotal]\n,[TotalIngreso]\n,[UtilidadNeta]\n FROM [master_party].[m_party]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "updatalakehouse",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
